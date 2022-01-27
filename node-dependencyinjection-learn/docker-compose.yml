@@ -1,0 +1,43 @@
+version: "3"
+services:
+  db:
+    image: mysql:latest
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_DATABASE=testdb
+      - MYSQL_USER="db_user"
+      - MYSQL_PASSWORD=mypassword
+      - MYSQL_ROOT_PASSWORD=mypassword
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - intouchui
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+
+      PMA_USER: root
+      PMA_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: mypassword
+      #PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "5000:80"
+    depends_on:
+     - db
+    networks:
+    - intouchui
+
+networks:
+  intouchui:
+    driver: bridge
+volumes:
+  dbdata:
